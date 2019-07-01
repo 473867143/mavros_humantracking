@@ -8,7 +8,7 @@
 
 #include "mavros_msgs/ActuatorControl.h"
 #include "mavros_msgs/MountControl.h"
-
+#include "mavros_msgs/CommandLong.h"
 #include "geometric_controller/geometric_controller.h"
 
 using namespace std;
@@ -21,6 +21,7 @@ class HumanTrackingCtrl
 
     ros::Publisher actuator_setpoint_pub_;
     ros::Publisher mount_control_pub_;
+    ros::ServiceClient landinggear_client_;
 
     ros::Timer cmdloop_timer_, statusloop_timer_;
 

@@ -16,6 +16,8 @@ HumanTrackingCtrl::HumanTrackingCtrl(const ros::NodeHandle& nh, const ros::NodeH
   actuator_setpoint_pub_ = nh_.advertise<mavros_msgs::ActuatorControl>("/mavros/actuator_control", 1);
   mount_control_pub_ = nh_.advertise<mavros_msgs::MountControl>("/mavros/mount_control/command", 1);
 
+  landinggear_client_ = nh_.serviceClient<mavros_msgs::CommandLong>("/mavros/cmd/command");
+
   gimbal_pitch_ = 0.0;
   tracking_pos_ << 0.0, 0.0, 0.0;
 }
@@ -27,6 +29,7 @@ void HumanTrackingCtrl::CmdLoopCallback(const ros::TimerEvent& event){
 
   geometric_controller_.getStates(mav_pos_, mav_att_, mav_vel_, mav_bodyrate_);
 
+
   PointGimbalToPoint(tracking_pos_);
   // PublishActuatorSetpoints();
   PublishMountControl();
@@ -34,6 +37,17 @@ void HumanTrackingCtrl::CmdLoopCallback(const ros::TimerEvent& event){
 
 void HumanTrackingCtrl::StatusLoopCallback(const ros::TimerEvent& event){
 
+  mavros_msgs::CommandLong landinggear_conf;
+  landinggear_conf.request.command = 2520;
+  landinggear_conf.request.param1 = -1;
+  landinggear_conf.request.param2 = 1;
+  landinggear_conf.request.param3 = NAN;
+  landinggear_conf.request.param4 = NAN;
+  landinggear_conf.request.param5 = NAN;
+  landinggear_conf.request.param6 = NAN;
+  landinggear_conf.request.param7 = NAN;
+
+  landinggear_client_.call(landinggear_conf);
 
 }
 
